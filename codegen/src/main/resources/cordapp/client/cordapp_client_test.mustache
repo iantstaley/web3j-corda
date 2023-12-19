@@ -1,0 +1,47 @@
+package {{apiPackage}}
+
+{{#imports}}import {{import}}
+{{/imports}}
+
+import javax.annotation.Generated
+import org.junit.jupiter.api.Test
+import org.web3j.corda.network.CordaNetwork
+import org.web3j.corda.network.network
+import org.web3j.corda.network.nodes
+import org.web3j.corda.network.party
+import java.io.File
+
+@Generated(
+    value = ["{{generator}}"],
+    date = "{{currentDate}}"
+)
+class {{classname}}Test {
+
+    private val network = network {
+        directory = File(System.getProperty("user.dir")).parentFile
+        nodes {
+            party {
+                name = "O=PartyA, L=London, C=GB"
+            }
+        }
+    }
+
+{{#operations}}
+    {{#flows}}
+    {{#hasInput}}private lateinit var {{#camelcase}}{{inputClass}}{{/camelcase}}: {{inputClass}}{{/hasInput}}
+
+    @Test
+    fun `start the {{#titlecase}}{{#camelcase}}{{flowId}}{{/camelcase}}{{/titlecase}} flow`() {
+        {{#hasInput}}
+        // TODO Initialize {{#camelcase}}{{inputClass}}{{/camelcase}}
+        // val {{#camelcase}}{{inputClass}}{{/camelcase}} = {{inputClass}}(...)
+        {{/hasInput}}
+        {{classname}}.load(network.parties[0].corda.service).flows.{{#camelcase}}{{flowId}}{{/camelcase}}
+            .start({{#hasInput}}{{#camelcase}}{{inputClass}}{{/camelcase}}{{/hasInput}})
+
+        // TODO Add assertions
+    }
+    {{/flows}}
+    
+{{/operations}}
+}

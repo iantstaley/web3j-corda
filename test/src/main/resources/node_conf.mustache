@@ -1,0 +1,26 @@
+devMode=true
+myLegalName="{{&name}}"
+{{#isNotary}}
+notary {
+    validating={{isValidating}}
+}
+{{/isNotary}}
+p2pAddress="{{&p2pAddress}}"
+rpcSettings {
+    address="0.0.0.0:{{rpcPort}}"
+    adminAddress="0.0.0.0:{{adminPort}}"
+}
+security {
+    authService {
+        dataSource {
+            type=INMEMORY
+            users=[{
+                user={{user}}
+                password={{password}}
+                permissions=[{{permissions}}]
+            }]
+        }
+    }
+}
+compatibilityZoneURL="{{compatibilityZoneURL}}"
+devModeOptions.allowCompatibilityZone=true

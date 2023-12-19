@@ -1,0 +1,18 @@
+repositories {
+    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+    maven { url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases' }
+    maven { url 'http://ci-artifactory.corda.r3cev.com/artifactory/corda-dependencies' }
+    maven { url 'https://dl.bintray.com/r3/corda/' }
+    maven {
+        url 'https://gitlab.com/api/v4/projects/5172644/packages/maven'
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+        mavenContent {
+            snapshotsOnly()
+        }
+    }
+}

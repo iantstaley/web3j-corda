@@ -1,0 +1,9 @@
+description = 'Web3j common libraries for the Corda blockchain platform.'
+
+dependencies {
+    implementation group: 'javax.activation', name: 'javax.activation-api', version: versions.activationApi
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: versions.jaxbApi
+
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: versions.jackson
+}

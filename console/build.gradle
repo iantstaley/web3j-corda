@@ -1,0 +1,129 @@
+plugins {
+    id 'application'
+    id 'distribution'
+    id 'com.github.johnrengelman.shadow'
+}
+
+task shadowBugWorkaround(type: Jar) {
+    archiveBaseName = 'nested-gradle-jar'
+    from files(file("${rootDir}/gradle/wrapper/gradle-wrapper.jar"))
+    destinationDir file('build/shadow-bug-workaround')
+}
+
+shadowJar {
+    dependsOn shadowBugWorkaround
+    zip64 = true
+    // Shadow plugin bug: explodes the nested jar.
+    // Workaround: double-nest the jar.
+    // Refer https://github.com/johnrengelman/shadow/issues/111
+    from shadowBugWorkaround
+}
+
+shadowDistZip{
+    archiveFileName = "$rootProject.name-${rootProject.version}.zip"
+}
+
+shadowDistTar{
+    archiveFileName = "$rootProject.name-${rootProject.version}.tar"
+}
+
+description = 'Web3j command-line tools for the Corda blockchain platform.'
+mainClassName = 'org.web3j.corda.console.CordaCommandMain'
+applicationName = 'web3j-corda'
+
+dependencies {
+    api project(':web3j-corda-core')
+    api project(':web3j-corda-codegen')
+
+    api("javax.annotation:javax.annotation-api:${versions.annotationApi}")
+
+    implementation(group: 'net.corda', name: 'corda-node', version: versions.corda) {
+        exclude group: 'com.ea.agentloader'
+        exclude group: 'com.github.bft-smart'
+        exclude group: 'com.google.jimfs'
+        exclude group: 'com.h2database'
+        exclude group: 'com.intellij'
+        exclude group: 'com.lmax'
+        exclude group: 'com.mattbertolini'
+        exclude group: 'com.palominolabs.metrics'
+        exclude group: 'com.squareup.okhttp3'
+        exclude group: 'com.typesafe'
+        exclude group: 'com.zaxxer'
+        exclude group: 'com.jcabi'
+        exclude group: 'io.atomix.catalyst'
+        exclude group: 'io.atomix.copycat'
+        exclude group: 'org.jetbrains.kotlin'
+        exclude group: 'org.apache.activemq'
+        exclude group: 'org.apache.logging.log4j'
+        exclude group: 'org.apache.shiro'
+        exclude group: 'org.hibernate'
+        exclude group: 'org.jolokia'
+        exclude group: 'org.liquibase'
+        exclude group: 'org.postgresql'
+        exclude group: 'org.fusesource.jansi'
+    }
+    implementation(group: 'io.bluebank.braid', name: 'braid-corda', version: versions.braid, changing: true) {
+        exclude group: 'io.vertx', module: 'vertx-auth-shiro'
+        exclude group: 'io.vertx', module: 'vertx-rx-gen'
+        exclude group: 'io.vertx', module: 'vertx-rx-java'
+    }
+
+    implementation "info.picocli:picocli:${versions.picocli}"
+    implementation "org.gradle:gradle-tooling-api:${versions.gradle}"
+
+    testImplementation project(':web3j-corda-test')
+}
+
+def generatedResources = "$buildDir/generated-resources/main"
+
+sourceSets {
+    main {
+        //register an output folder on the main SourceSet:
+        output.dir(generatedResources, builtBy: 'generateVersionProperties')
+        //it is now a part of the 'main' classpath and will be a part of the jar
+    }
+    integrationTest {
+        kotlin {
+            srcDir {
+                "$buildDir/generated/src/main/kotlin"
+            }
+        }
+    }
+}
+
+task generateCorDappWrappers(type: JavaExec, group: 'web3j-corda') {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.web3j.corda.console.CordaCommandMain'
+
+    args 'generate', '--package-name', 'org.web3j.corda',
+            '--cordapps-dir', "$projectDir/src/test/resources/cordapps",
+            '--output-dir', "$buildDir/generated"
+}
+
+compileIntegrationTestJava {
+    mustRunAfter 'compileIntegrationTestKotlin'
+}
+
+compileIntegrationTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+    dependsOn 'generateCorDappWrappers'
+}
+
+task copyIntegrationTestResources(type: Copy) {
+    from 'build/resources/test/cordapps'
+    into 'build/resources/integrationTest/cordapps'
+    dependsOn 'processTestResources'
+}
+
+integrationTest {
+    dependsOn 'copyIntegrationTestResources'
+}
+
+task generateVersionProperties {
+    description 'Creates a version.properties file with build info that is added to the root of the jar'
+    doLast {
+        new File(generatedResources).mkdirs()
+        def generated = new File(generatedResources, "version.properties")
+        generated.text = "version=$rootProject.version"
+    }
+}

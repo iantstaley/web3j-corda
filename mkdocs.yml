@@ -1,0 +1,44 @@
+site_name: "Web3j Corda"
+site_description: "Documentation portal for the web3j Corda Blockchain Library"
+site_author: "Web3 Labs"
+site_url: "https://corda.web3j.io/"
+
+repo_name: "web3j/corda"
+repo_url: "https://github.com/web3j/corda"
+
+copyright: "Copyright &copy; 2017-2019 Web3 Labs Ltd"
+
+nav:
+  - Quickstart : quickstart.md
+  - Getting started : dependencies.md
+  - Connect to Corda node : connecting_to_node.md
+  - Network queries : network.md
+  - CorDapp client wrappers : client.md
+  - Generating client wrappers : generating.md
+  - Testing with client wrappers : usage.md
+  - Test network reference : tests.md
+  - Command Line Tools: command_line_tools.md
+  - Examples: examples.md
+  - Support: support.md
+
+# Configuration
+theme:
+  name: "material"
+  logo: "img/web3j-corda-logo.png"
+  language: "en"
+  feature:
+    tabs: true
+  palette:
+    primary: "white"
+    accent: "deep-orange"
+
+markdown_extensions:
+  - pymdownx.tasklist
+
+extra_css:
+  - "css/extra.css"
+  - "css/github.css"
+
+extra_javascript:
+  - 'js/highlight.pack.js'
+  - 'js/index.js'

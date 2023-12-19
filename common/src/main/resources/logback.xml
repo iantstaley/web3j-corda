@@ -1,0 +1,26 @@
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <logger name="io.vertx" level="error"/>
+    <logger name="io.bluebank.braid.corda" level="error"/>
+    <!--    FIXME: Stop disabling when braid generates correct swagger.json-->
+    <logger name="org.openapitools.codegen.DefaultCodegen" level="error"/>
+    <logger name="org.web3j.corda.codegen.CordaGeneratorUtils" level="error"/>
+
+    <logger name="org.junit.jupiter" level="warn"/>
+    <logger name="org.openapitools.codegen" level="warn"/>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

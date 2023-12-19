@@ -1,0 +1,9 @@
+description = 'Web3j Corda RPC and Network Map APIs for the Corda blockchain platform.'
+
+dependencies {
+    api project(":web3j-corda-common")
+    api group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: versions.jaxrs
+
+    testImplementation "com.github.tomakehurst:wiremock-jre8:${versions.wiremock}"
+    testImplementation "com.fasterxml.jackson.module:jackson-module-kotlin:${versions.jackson}"
+}
